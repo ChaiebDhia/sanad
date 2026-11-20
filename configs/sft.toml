@@ -1,0 +1,25 @@
+# QLoRA supervised fine-tuning. Edit, then: python train/sft_qlora.py --config configs/sft.toml
+# base_model is a PLACEHOLDER: choose by licence, size and Arabic/French tokenisation efficiency,
+# and confirm it loads before a long run. Record the exact revision you used in docs/RESULTS.md.
+[model]
+base_model = "Qwen/Qwen2.5-1.5B-Instruct"
+
+[data]
+train = "data/sft.train.jsonl"
+dev = "data/sft.dev.jsonl"
+
+[lora]
+r = 16
+alpha = 32
+dropout = 0.05
+target_modules = "all-linear"
+
+[train]
+output_dir = "runs/sft"
+epochs = 2
+learning_rate = 2e-4
+per_device_batch_size = 1
+grad_accum = 16
+max_length = 2048
+seed = 42
+report_to = "mlflow"   # or "none"
