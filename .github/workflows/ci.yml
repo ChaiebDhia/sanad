@@ -1,0 +1,42 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e ".[dev]"
+      - run: ruff check . && ruff format --check .
+      - run: mypy
+      - run: pytest --cov=sanad --cov-fail-under=85
+  data:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
+      - name: Build training data (fails on any overlap with citegate's test worlds)
+        run: sanad data-build --out data
+      - name: Validate training files and re-run the leakage check
+        run: sanad data-check --data data
+      - name: Training scripts accept the data (no GPU needed)
+        run: python train/sft_qlora.py --dry-run && python train/dpo.py --dry-run
+      - name: Determinism (same seeds, same bytes)
+        run: |
+          sha256sum data/*.jsonl > /tmp/a.txt
+          rm -rf data && sanad data-build --out data > /dev/null
+          sha256sum data/*.jsonl | diff - /tmp/a.txt
