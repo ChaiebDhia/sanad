@@ -1,5 +1,6 @@
 """Command line, including the real citegate executable."""
 
+import os
 import shutil
 import subprocess
 
@@ -35,8 +36,9 @@ def test_the_real_citegate_command_line_can_evaluate_the_server(server, tmp_path
     proc = subprocess.run(
         [exe, "run", "--agent", "llm", "--provider", "ollama", "--base-url", srv.url,
          "--model", "oracle", "--sample", "15", "--concurrency", "4", "--out", str(out)],
-        capture_output=True, text=True, timeout=120, check=False,
+        capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=120, check=False,
+        env={**os.environ, "PYTHONUTF8": "1"},
     )  # fmt: skip
     assert proc.returncode == 0, proc.stderr
-    assert len(out.read_text().splitlines()) >= 15
+    assert len(out.read_text(encoding="utf-8").splitlines()) >= 15
     assert "llm:ollama:oracle" in proc.stdout

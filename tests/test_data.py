@@ -98,7 +98,7 @@ def test_validators_reject_bad_files(tmp_path: Path):
     with pytest.raises(ValueError, match="citegate's current prompt"):
         validate.validate_sft(bad)
     empty = tmp_path / "empty.jsonl"
-    empty.write_text("")
+    empty.write_text("", encoding="utf-8")
     with pytest.raises(ValueError):
         validate.validate_sft(empty)
 
