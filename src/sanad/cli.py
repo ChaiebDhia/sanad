@@ -140,7 +140,16 @@ def cmd_show(args: argparse.Namespace) -> int:
     return 0
 
 
+def _safe_streams() -> None:
+    """Printing Arabic must never crash a cp1252 console or a pipe: replace, do not raise."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            reconfigure(errors="replace")
+
+
 def main(argv: Sequence[str] | None = None) -> int:
+    _safe_streams()
     p = argparse.ArgumentParser(prog="sanad", description=__doc__)
     sub = p.add_subparsers(dest="cmd", required=True)
 
