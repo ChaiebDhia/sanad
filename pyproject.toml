@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,7 +8,8 @@ version = "0.3.0"
 description = "Post-training and serving lab for citation-grounded EN/FR/AR answering. Evaluation is delegated to citegate."
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "Dhia Chaieb" }]
 keywords = ["llm", "lora", "qlora", "dpo", "rag", "grounding", "arabic", "multilingual", "serving"]
 dependencies = [
