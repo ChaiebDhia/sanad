@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sanad"
+version = "0.3.0"
+description = "Post-training and serving lab for citation-grounded EN/FR/AR answering. Evaluation is delegated to citegate."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Dhia Chaieb" }]
+keywords = ["llm", "lora", "qlora", "dpo", "rag", "grounding", "arabic", "multilingual", "serving"]
+dependencies = [
+  # Pinned to an exact commit so results are reproducible. Update deliberately.
+  "citegate @ git+https://github.com/ChaiebDhia/citegate.git@c3446ad820fc78e8b0b67d32dfd02d47bbafb672",
+]
+
+[project.optional-dependencies]
+train = [
+  "torch",
+  "transformers",
+  "datasets",
+  "peft",
+  "trl",
+  "accelerate",
+  "bitsandbytes; sys_platform == 'linux'",
+  "mlflow",
+]
+dev = ["pytest>=8", "pytest-cov", "ruff", "mypy"]
+
+[project.scripts]
+sanad = "sanad.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]  # long lines are trilingual data strings
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.coverage.report]
+exclude_also = ["pragma: no cover"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src/sanad"]
+
+[[tool.mypy.overrides]]
+module = ["torch", "torch.*", "transformers", "transformers.*", "peft", "peft.*"]
+ignore_missing_imports = true
