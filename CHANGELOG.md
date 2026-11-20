@@ -8,4 +8,6 @@
 - QLoRA SFT/DPO scripts and a Kaggle notebook (not yet run on a GPU).
 - Decision records, free-stack guide and deployment playbook.
 
+- Windows fixes found on the first Windows run: explicit UTF-8 in tests, console-safe printing of Arabic, SPDX licence string, `.gitattributes`, Python 3.14 in CI.
+
 Known gaps: no language-model results; GPU paths unverified (`docs/VERIFICATION.md`).

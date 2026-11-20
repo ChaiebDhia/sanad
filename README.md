@@ -19,7 +19,7 @@ Sanad is the **training and serving half** of a two-repo pipeline. It deliberate
 
 | Part | State |
 |---|---|
-| Data generation, leakage check against citegate, SFT/DPO builders, validators | Built; 25 tests; every training answer is verified by citegate's own metrics |
+| Data generation, leakage check against citegate, SFT/DPO builders, validators | Built; 26 tests; every training answer is verified by citegate's own metrics |
 | Batching OpenAI-compatible server, serving benchmark, CLI | Built; tested end to end with citegate's real adapter, runner and command line (fake model) |
 | QLoRA SFT / DPO scripts, `HFBackend` (GPU server), Kaggle notebook | Written; **not yet run on a GPU** |
 | **Language-model results** | **None yet.** No model has been trained or evaluated |
@@ -91,7 +91,7 @@ configs/     sft.toml, dpo.toml
 notebooks/   sanad_kaggle.ipynb
 docs/        FREE_STACK, CITEGATE, DEPLOYMENT_PLAYBOOK, VERIFICATION, RESULTS,
              CORRECTIONS, MODEL_CARD, adr/ (decision records)
-tests/       25 tests
+tests/       26 tests
 ```
 
 MIT licensed. See `CONTRIBUTING.md`, `CHANGELOG.md`, `SECURITY.md`.

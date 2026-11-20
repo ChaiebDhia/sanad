@@ -3,7 +3,8 @@
 Last updated: 2026-11-18 (v0.3.0).
 
 ## Verified by running it
-- `pytest`: 25 tests (one needs the `citegate` executable on PATH and is skipped if absent); line coverage floor 85% with GPU-only code excluded.
+- First Windows run (Python 3.14, PowerShell): `mypy` clean and 24 of 25 tests passed; the one failure (a UTF-8 decoding bug in a test) is fixed and the suite is now 26 tests.
+- `pytest`: 26 tests (one needs the `citegate` executable on PATH and is skipped if absent); line coverage floor 85% with GPU-only code excluded.
 - `ruff check`, `ruff format --check`, strict `mypy`: clean.
 - Prompt and answer parsing are identical to citegate's `LLMAgent` on real cases.
 - Every chosen training completion passes, and every rejected completion fails, citegate's `score_case`.
