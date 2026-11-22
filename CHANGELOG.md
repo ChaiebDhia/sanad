@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.1 (unreleased)
+- First measured baseline recorded in `docs/RESULTS.md` (untouched Qwen2.5-1.5B-Instruct: 3.8% on citegate's golden set, 11.4% on Sanad's dev world).
+- Fix: training and serving pick fp16 on GPUs without native bf16 (T4 crash and slow serving), with a TRL fp32 matmul fallback.
+- Fix: the Kaggle notebook stops on the first failed command and checks each step's output.
+
 ## 0.3.0 (2026-11-18): first public release (pre-release: no model results yet)
 - Sanad is the training and serving half of a pipeline; evaluation is delegated to citegate (pinned commit).
 - Data synthesis in citegate's exact prompt/answer contract with its own vocabulary and phrasing; zero-overlap leakage check against citegate's worlds.
