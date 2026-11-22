@@ -37,7 +37,13 @@ def main() -> int:
     from trl import SFTConfig, SFTTrainer
 
     t, lo = cfg["train"], cfg["lora"]
-    dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+    from sanad.hw import apply_trl_workarounds, gpu_capability, supports_bf16
+
+    capability = gpu_capability()
+    dtype = torch.bfloat16 if supports_bf16(capability) else torch.float16
+    print(f"GPU compute capability {capability}: training in {dtype}", flush=True)
+    if apply_trl_workarounds(capability):
+        print("TRL: using the fp32 matmul fallback for this GPU", flush=True)
     tok = AutoTokenizer.from_pretrained(cfg["model"]["base_model"])
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token

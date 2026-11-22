@@ -53,7 +53,9 @@ class HFBackend:  # pragma: no cover  (needs a GPU; see docs/VERIFICATION.md)
         self.tok: Any = AutoTokenizer.from_pretrained(base_model, padding_side="left")
         if self.tok.pad_token is None:
             self.tok.pad_token = self.tok.eos_token
-        dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+        from .hw import pick_dtype
+
+        dtype = pick_dtype(torch)
         kwargs: dict[str, Any] = {"device_map": "auto"}
         if load_4bit:
             kwargs["quantization_config"] = BitsAndBytesConfig(
