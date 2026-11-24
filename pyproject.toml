@@ -28,7 +28,7 @@ train = [
   "bitsandbytes; sys_platform == 'linux'",
   "mlflow",
 ]
-dev = ["pytest>=8", "pytest-cov", "ruff", "mypy"]
+dev = ["pytest>=9.2.0", "pytest-cov", "ruff", "mypy"]
 
 [project.scripts]
 sanad = "sanad.cli:main"
