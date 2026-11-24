@@ -53,10 +53,10 @@ class HFBackend:  # pragma: no cover  (needs a GPU; see docs/VERIFICATION.md)
         self.tok: Any = AutoTokenizer.from_pretrained(base_model, padding_side="left")
         if self.tok.pad_token is None:
             self.tok.pad_token = self.tok.eos_token
-        from .hw import pick_dtype
+        from .hw import model_dtype_kwargs, pick_dtype
 
         dtype = pick_dtype(torch)
-        kwargs: dict[str, Any] = {"device_map": "auto"}
+        kwargs: dict[str, Any] = {"device_map": "auto", **model_dtype_kwargs(dtype)}
         if load_4bit:
             kwargs["quantization_config"] = BitsAndBytesConfig(
                 load_in_4bit=True,
@@ -64,8 +64,6 @@ class HFBackend:  # pragma: no cover  (needs a GPU; see docs/VERIFICATION.md)
                 bnb_4bit_use_double_quant=True,
                 bnb_4bit_compute_dtype=dtype,
             )
-        else:
-            kwargs["torch_dtype"] = dtype
         model: Any = AutoModelForCausalLM.from_pretrained(base_model, **kwargs)
         if adapter:
             from peft import PeftModel

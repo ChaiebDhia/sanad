@@ -46,7 +46,8 @@ ignore = ["E501"]  # long lines are trilingual data strings
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-q"
+addopts = "-q -m 'not e2e'"
+markers = ["e2e: end-to-end pipeline test on a tiny model (needs torch, transformers, peft, trl)"]
 
 [tool.coverage.report]
 exclude_also = ["pragma: no cover"]

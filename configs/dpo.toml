@@ -1,6 +1,7 @@
 # Preference tuning on failure-mode pairs. Run AFTER merging the SFT adapter
 # (python train/merge_adapter.py ...) and point base_model at the merged folder.
 [model]
+load_4bit = true          # QLoRA. Set false only for a CPU smoke test with a tiny model
 base_model = "runs/sft-merged"
 
 [data]
@@ -21,4 +22,5 @@ per_device_batch_size = 1
 grad_accum = 16
 max_length = 2048
 seed = 42
+precision = "auto"          # auto: bf16 on Ampere+, fp16 on T4/P100. Use "fp32" if the loss turns NaN
 report_to = "mlflow"
