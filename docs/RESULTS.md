@@ -19,7 +19,8 @@ Pass rate, Wilson 95% interval, by group:
 
 | System | Overall | injection | stale | out_of_scope | multihop | age | days | fee | office | en | fr | ar |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Base (untouched) | **3.8%** (2.6% to 5.4%) | 0.0% | 0.0% | 95.8% | 0.0% | 0.0% | 0.0% | 0.0% | 3.5% | 3.2% | 4.4% | 3.6% |
+| Base, run 1 (emulated bf16, 2026-11-21) | **3.8%** (2.6% to 5.4%) | 0.0% | 0.0% | 95.8% | 0.0% | 0.0% | 0.0% | 0.0% | 3.5% | 3.2% | 4.4% | 3.6% |
+| Base, run 2 (fp16 compute, 2026-11-22) | **3.6%** (2.5% to 5.2%) | 0.0% | 0.0% | 95.8% | 0.0% | 0.0% | 0.0% | 0.0% | 2.8% | 3.2% | 4.0% | 3.6% |
 | SFT | | | | | | | | | | | | |
 | SFT + DPO | | | | | | | | | | | | |
 | Hosted model (name, date) | | | | | | | | | | | | |
@@ -32,6 +33,10 @@ Per-metric rates for the base model (all 744 cases):
 
 Per-language `lang_ok`: en 97.6%, ar 79.8%, **fr 12.1%**.
 
+### What the two baseline runs show
+- Switching from emulated bf16 to fp16 compute did **not** change quality (3.8% vs 3.6%; the intervals overlap almost entirely) and cut median latency from 13.4 s to 3.9 s. So the dtype mattered for speed, not for the answers.
+- The final baseline will be re-run once more after the loader change (all weights in the chosen dtype), so base and tuned models are served identically.
+
 ### What the baseline shows (read this before training)
 - The base model usually produces the **right value** (`correct` 78%) but almost never an answer the grounding metrics accept (`faithful` 7%, `cites_gold` 14%). On these results the gap looks like **citation and quoting behaviour**, not missing knowledge. This is a hypothesis: check examples in `runs/base.html` before relying on it.
 - French answers rarely pass the language check (12%), so the model probably answers French questions in another language. Also a hypothesis to check in the report.
@@ -43,7 +48,8 @@ Command: `sanad dev-eval --base-url http://127.0.0.1:8000/v1 --model base --conc
 
 | System | Overall | injection | stale | out_of_scope | multihop | age | days | fee | office | en | fr | ar |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Base (untouched) | **11.4%** (9.7% to 13.3%) | 0.0% | 0.0% | 60.9% | 0.0% | 0.0% | 0.0% | 0.0% | 7.3% | 14.8% | 9.4% | 9.9% |
+| Base, run 1 (emulated bf16, 2026-11-21) | **11.4%** (9.7% to 13.3%) | 0.0% | 0.0% | 60.9% | 0.0% | 0.0% | 0.0% | 0.0% | 7.3% | 14.8% | 9.4% | 9.9% |
+| Base, run 2 (fp16 compute, 2026-11-22) | **11.2%** (9.5% to 13.1%) | 0.0% | 0.0% | 61.5% | 0.0% | 0.0% | 0.0% | 0.0% | 5.7% | 14.8% | 9.1% | 9.6% |
 | SFT | | | | | | | | | | | | |
 | SFT + DPO | | | | | | | | | | | | |
 
@@ -52,7 +58,8 @@ The base model refuses much less reliably here (60.9%) than on citegate (95.8%):
 ## Serving (`sanad bench`)
 | Setup | p50 | p95 | p99 | completion tok/s | $ per 1k answers (free = $0) | $ per 1k at rented-GPU price | Notes |
 |---|---|---|---|---|---|---|---|
-| Base, 4-bit, concurrency 8, 100 requests | 13.4 s | 41.4 s | 41.4 s | 9.6 | not computed (no price given) | not computed | **Not representative**: pre-fix emulated-bf16 compute on a T4-class GPU. Re-measure after the dtype fix |
+| Base, run 1: emulated bf16, 4-bit, concurrency 8, 100 requests | 13.4 s | 41.4 s | 41.4 s | 9.6 | not computed (no price given) | not computed | **Not representative**: pre-fix emulated-bf16 compute on a T4-class GPU. Re-measure after the dtype fix |
+| Base, run 2: fp16 compute, 4-bit, concurrency 8, 100 requests | 3.9 s | 15.3 s | 15.3 s | 28.6 | not computed (no price given) | not computed | Same GPU class. 3.4x lower median latency than run 1. Not yet the final setup: weights will be loaded in fp16 for both paths (see CORRECTIONS 2026-11-22) |
 | SFT | | | | | | | |
 | SFT + DPO | | | | | | | |
 
