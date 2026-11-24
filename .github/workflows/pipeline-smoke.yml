@@ -1,0 +1,32 @@
+name: pipeline-smoke
+# Runs the real train -> merge -> DPO -> serve -> evaluate pipeline on a tiny random model (CPU).
+# Weekly and on pull requests that touch the pipeline, with the LATEST transformers, TRL and PEFT,
+# so a breaking upstream release is caught here and not in the middle of a GPU session.
+on:
+  schedule:
+    - cron: "23 4 * * 1"
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "train/**"
+      - "tools/**"
+      - "tests/e2e/**"
+      - "configs/**"
+      - "src/sanad/hw.py"
+      - "src/sanad/serve.py"
+      - "pyproject.toml"
+permissions:
+  contents: read
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: pip install -e ".[dev]" transformers peft trl datasets accelerate
+      - run: pip list | grep -i -E "^(torch|transformers|peft|trl|datasets|accelerate|citegate) "
+      - run: pytest -m e2e

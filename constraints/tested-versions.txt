@@ -1,0 +1,10 @@
+# Library versions the CPU end-to-end pipeline test passed with (2026-11-23, Python 3.12).
+# Use only if a newer release breaks the pipeline:
+#   pip install -c constraints/tested-versions.txt transformers peft trl datasets accelerate
+# torch is deliberately not pinned: Kaggle ships a CUDA build that must not be replaced.
+transformers==5.24.0
+peft==0.22.0
+trl==1.18.2
+datasets==5.2.0
+accelerate==1.16.0
+tokenizers==0.23.3
